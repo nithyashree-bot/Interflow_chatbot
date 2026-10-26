@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InternFlow Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1edff;--panel:#fff;--ink:#1c1740;--mute:#6b6890;--line:#e3defa;--brand:#5b3df5;--brand2:#8a5cff;--coral:#ff6b57;--sun:#ffc233;--tint:#f7f4ff;--ok:#0f9d68;--warn:#c97800;--wait:#3d6cf0;--bad:#d6334a;--shadow:0 6px 18px rgba(91,61,245,.12);
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#100d24;--panel:#1a1640;--ink:#f0eeff;--mute:#a7a3d0;--line:#2f2a63;--brand:#9a86ff;--tint:#211c4d;--ok:#4fe0a4;--warn:#ffbf55;--wait:#86a6ff;--bad:#ff7a8c;--shadow:0 6px 18px rgba(0,0,0,.35);color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans","Segoe UI",system-ui,sans-serif}
+header{background:linear-gradient(120deg,#4b2fe0,#8a5cff 60%,#ff6b57);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{width:44px;height:44px;border-radius:50%;background:var(--sun);color:#3b2400;display:grid;place-items:center;font:800 17px "Bricolage Grotesque",sans-serif;box-shadow:0 0 0 4px rgba(255,255,255,.3)}
+h1{font:800 24px/1.1 "Bricolage Grotesque",sans-serif;margin:0;letter-spacing:-.3px}
+header p{margin:2px 0 0;font-size:13px;opacity:.9}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--panel);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);border-top:4px solid var(--brand)}
+.stat:nth-child(2){border-color:var(--ok)}.stat:nth-child(3){border-color:var(--warn)}.stat:nth-child(4){border-color:var(--wait)}.stat:nth-child(5){border-color:var(--coral)}
+.stat b{display:block;font:800 28px/1.1 "Bricolage Grotesque",sans-serif}
+.stat span{color:var(--mute);font-size:13px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:8px 12px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+#search{flex:1;min-width:180px}
+button{font:700 14px "Plus Jakarta Sans",sans-serif;border:1.5px solid var(--brand);background:var(--panel);color:var(--brand);padding:8px 14px;border-radius:10px;cursor:pointer}
+button.pri{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}
+button.dang{color:var(--bad);border-color:var(--bad)}button.dang.arm{background:var(--bad);color:#fff}
+button.sm{padding:4px 10px;font-size:13px}
+.wrap{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{background:var(--tint);font-size:13px;color:var(--mute);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td small{display:block;color:var(--mute)}
+.pill{display:inline-block;padding:1px 11px;border-radius:99px;border:1.5px solid currentColor;font-size:13px;font-weight:700;background:var(--panel)}
+.s-Completed{color:var(--ok)}.s-In-Progress{color:var(--warn)}.s-Not-Started{color:var(--wait)}
+.prog{height:8px;width:90px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:4px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--coral))}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.empty{padding:30px;text-align:center;color:var(--mute)}
+dialog{border:0;border-radius:18px;padding:22px;max-width:560px;width:calc(100% - 28px);background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(20,10,60,.55)}
+dialog h2{margin:0 0 12px;font:800 20px "Bricolage Grotesque",sans-serif}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg label{display:flex;flex-direction:column;font-size:13px;color:var(--mute);gap:3px}.fg .full{grid-column:1/-1}
+.fg input,.fg select,.fg textarea{width:100%}
+.dl{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#msg{min-height:22px;margin:0 0 10px;font-size:14px;color:var(--ok)}
+.note{font-size:12.5px;color:var(--mute);margin-top:12px}
+@media (max-width:560px){.fg{grid-template-columns:1fr}}
+
+#cbFab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:62px;height:62px;border-radius:50%;border:0;padding:0;background:linear-gradient(135deg,var(--coral),#ff9a57);color:#fff;font:800 14px "Bricolage Grotesque",sans-serif;box-shadow:0 8px 22px rgba(255,107,87,.5);cursor:pointer}
+#cbPanel{position:fixed;right:18px;bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:41;width:390px;max-width:calc(100vw - 24px);height:min(620px,calc(100vh - 120px));display:none;flex-direction:column;background:var(--panel);border-radius:20px;box-shadow:0 20px 60px rgba(40,20,120,.35);overflow:hidden;border:1px solid var(--line)}
+#cbPanel.open{display:flex}
+.cbh{display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(120deg,#4b2fe0,#8a5cff 60%,#ff6b57);color:#fff}
+.cbh b{font:800 17px "Bricolage Grotesque",sans-serif;display:block;line-height:1.1}.cbh small{opacity:.9;font-size:12px}
+#cbWho{margin-left:auto;font-size:12px;text-align:right;white-space:pre-line}#cbWho:empty{display:none}
+#cbX{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:50%;width:30px;height:30px;padding:0;font-size:16px}
+#cbLog{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--tint)}
+.cm{max-width:90%;padding:9px 13px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:var(--shadow);font-size:14.5px}
+.cm.bot{background:var(--panel);align-self:flex-start;border-bottom-left-radius:4px;border-left:4px solid var(--brand)}
+.cm.me{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.cm .cd{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin-top:6px;padding:8px 10px;background:var(--tint);border-radius:10px}
+.cm .cd b{color:var(--brand)}
+.cm .dr{margin:8px 0;padding:8px 10px;border:1.5px dashed var(--brand);border-radius:10px;font-size:13.5px}
+.cm .act{margin:6px 6px 0 0;padding:6px 12px;border-radius:99px;font-size:13px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}.cm .act.alt{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.cm .bar2{height:8px;background:var(--line);border-radius:9px;overflow:hidden;grid-column:1/-1}.cm .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--coral))}
+#cbChips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 2px}
+#cbChips button{padding:5px 11px;border-radius:99px;font-size:13px}
+#cbChips button:nth-child(3n+2){border-color:var(--coral);color:var(--coral)}#cbChips button:nth-child(3n){border-color:var(--ok);color:var(--ok)}
+#cbForm{display:flex;gap:8px;padding:10px 12px}#cbForm input{flex:1;min-width:0;border-radius:99px}
+#cbForm button{border-radius:99px;background:linear-gradient(135deg,var(--coral),#ff9a57);color:#fff;border-color:transparent}
+.fbi{padding:10px 0;border-bottom:1px solid var(--line)}.fbi small{display:block;color:var(--mute)}
+</style></head>
+<body>
+<header><div class="logo">IF</div><div><h1>InternFlow Admin Dashboard</h1><p>Manage interns, tasks, reviews and reminders</p></div></header>
+<main>
+<div class="stats" id="stats"></div>
+<div id="msg" role="status" aria-live="polite"></div>
+<div class="bar">
+<input id="search" type="search" placeholder="Search name, register no., email or task" aria-label="Search">
+<select id="fs" aria-label="Filter by status"><option value="">All statuses</option><option>Not Started</option><option>In Progress</option><option>Completed</option></select>
+<select id="fd" aria-label="Filter by department"><option value="">All departments</option></select>
+<button class="pri" id="add">Add intern</button>
+</div>
+<div class="bar">
+<button id="mailall">Email all interns</button><button id="csv">Download CSV</button><button id="copyjs">Copy interns.js</button><button id="fbview">View feedback</button><button class="dang" id="reset">Reset to schedule</button>
+</div>
+<div class="wrap"><table><thead><tr><th>No.</th><th>Intern</th><th>Email</th><th>Task</th><th>Review</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
+<p class="note">Changes are saved in this browser only. Use Copy interns.js to update the chatbot data file. Status and progress start as sample values.</p>
+</main>
+<dialog id="dlg"><form method="dialog" id="form"><h2 id="dt">Edit intern</h2><div class="fg">
+<label>Name<input name="n" required></label><label>Register number<input name="r" required></label>
+<label class="full">Email<input name="e" type="email" required></label>
+<label class="full">Department<input name="d"></label>
+<label class="full">Allocated task<textarea name="t" rows="2"></textarea></label>
+<label>Review date<input name="rd" type="date" required></label><label>Review time<input name="rt" placeholder="10:00–10:15 AM"></label>
+<label>Status<select name="s"><option>Not Started</option><option>In Progress</option><option>Completed</option></select></label><label>Progress (%)<input name="p" type="number" min="0" max="100"></label>
+</div><div class="dl"><button type="button" id="cancel">Cancel</button><button class="pri" type="submit">Save</button></div></form></dialog>
+<dialog id="txt"><h2>Copy this text</h2><textarea id="ta" rows="10" style="width:100%" readonly></textarea><div class="dl"><button id="tclose">Close</button></div></dialog>
+
+<button id="cbFab" type="button" aria-label="Open InternFlow chatbot" aria-expanded="false">Chat</button>
+<section id="cbPanel" aria-label="InternFlow chatbot">
+<div class="cbh"><div><b>InternFlow Assistant</b><small>Task, review and status</small></div><div id="cbWho"></div><button id="cbX" type="button" aria-label="Close chat">&times;</button></div>
+<div id="cbLog" aria-live="polite"></div><div id="cbChips"></div>
+<form id="cbForm" autocomplete="off"><input id="cbIn" placeholder="Type your register number or a question" aria-label="Message"><button>Send</button></form>
+</section>
+<dialog id="fbd"><h2>Intern feedback</h2><div id="fbl"></div><div class="dl"><button type="button" id="fbclose">Close</button></div></dialog>
+<script>
+const SEED=[
+{n:"Nithya Shree",r:"23ECE001",e:"nithyaaiyyappan@gmail.com",d:"Electronics and Communication Engineering (ECE)",t:"PCB manufacturing process study and documentation",s:"In Progress",p:60,rd:"2026-10-27",rt:"10:00–10:15 AM"},
+{n:"Narmatha",r:"23ECE002",e:"narmathathangavel50@gmail.com",d:"Electronics and Communication Engineering (ECE)",t:"PTH assembly process and soldering inspection",s:"Completed",p:100,rd:"2026-10-27",rt:"10:15–10:30 AM"},
+{n:"Priya Devi",r:"23ECE003",e:"priya.devi@example.com",d:"Electronics and Communication Engineering (ECE)",t:"SMT assembly and component placement study",s:"In Progress",p:45,rd:"2026-10-27",rt:"10:30–10:45 AM"},
+{n:"Karthik Raj",r:"23ECE004",e:"karthik.raj@example.com",d:"Electronics and Communication Engineering (ECE)",t:"PCB testing and quality control report",s:"Not Started",p:0,rd:"2026-10-27",rt:"10:45–11:00 AM"},
+{n:"Divya Lakshmi",r:"23CSE005",e:"divya.lakshmi@example.com",d:"Computer Science Engineering (CSE)",t:"Admin dashboard frontend development",s:"In Progress",p:70,rd:"2026-10-27",rt:"11:00–11:15 AM"},
+{n:"Sanjay Kumar",r:"23CSE006",e:"sanjay.kumar@example.com",d:"Computer Science Engineering (CSE)",t:"Python backend API development",s:"Completed",p:100,rd:"2026-10-27",rt:"11:15–11:30 AM"},
+{n:"Monisha R",r:"23IT007",e:"monisha.r@example.com",d:"Information Technology (IT)",t:"Chatbot interface and task lookup",s:"In Progress",p:55,rd:"2026-10-27",rt:"11:30–11:45 AM"},
+{n:"Praveen S",r:"23EEE008",e:"praveen.s@example.com",d:"Electrical and Electronics Engineering (EEE)",t:"Electrical safety and testing equipment study",s:"Not Started",p:0,rd:"2026-10-27",rt:"11:45 AM–12:00 PM"},
+{n:"Keerthana M",r:"23AIDS009",e:"keerthana.m@example.com",d:"Artificial Intelligence and Data Science",t:"Task completion data analysis and progress summary",s:"In Progress",p:80,rd:"2026-10-27",rt:"12:00–12:15 PM"},
+{n:"Vigneshwaran P",r:"23ME010",e:"vigneshwaran.p@example.com",d:"Mechanical Engineering",t:"Enclosure and mounting design",s:"Completed",p:100,rd:"2026-10-27",rt:"12:15–12:30 PM"}
+];
+const KEY="internflow_admin_v1";
+let data=load();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s)&&s.length)return s}catch(e){}return SEED.map(x=>({...x}))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+function say(t,bad){const m=$("msg");m.style.color=bad?"var(--bad)":"var(--ok)";m.textContent=t;clearTimeout(say.t);say.t=setTimeout(()=>m.textContent="",5000)}
+const fmt=s=>s?new Date(s+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"";
+function daysLeft(s){const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(s+"T00:00:00")-t)/864e5)}
+function left(s){const d=daysLeft(s);return d<0?Math.abs(d)+" day"+(Math.abs(d)>1?"s":"")+" ago":d===0?"Today":d===1?"Tomorrow":"In "+d+" days"}
+const pill=s=>`<span class="pill s-${s.replace(" ","-")}">${s}</span>`;
+function stats(){
+ const c=s=>data.filter(x=>x.s===s).length,avg=data.length?Math.round(data.reduce((a,x)=>a+(+x.p||0),0)/data.length):0;
+ const up=data.filter(x=>x.rd&&daysLeft(x.rd)>=0).sort((a,b)=>a.rd.localeCompare(b.rd))[0];
+ $("stats").innerHTML=[[data.length,"Total interns"],[c("Completed"),"Completed"],[c("In Progress"),"In progress"],[c("Not Started"),"Not started"],[avg+"%","Average progress"]].map(([a,b])=>`<div class="stat"><b>${a}</b><span>${b}</span></div>`).join("")+`<div class="stat" style="border-color:var(--sun)"><b style="font-size:20px">${up?left(up.rd):"None"}</b><span>${up?"Next review: "+fmt(up.rd):"No upcoming review"}</span></div>`;
+}
+function depts(){const cur=$("fd").value,ds=[...new Set(data.map(x=>x.d).filter(Boolean))].sort();$("fd").innerHTML='<option value="">All departments</option>'+ds.map(d=>`<option${d===cur?" selected":""}>${esc(d)}</option>`).join("")}
+function render(){
+ stats();depts();
+ const q=$("search").value.toLowerCase().trim(),fs=$("fs").value,fd=$("fd").value;
+ const list=data.map((x,i)=>({x,i})).filter(({x})=>(!fs||x.s===fs)&&(!fd||x.d===fd)&&(!q||[x.n,x.r,x.e,x.t].join(" ").toLowerCase().includes(q)));
+ $("rows").innerHTML=list.length?list.map(({x,i})=>`<tr><td>${i+1}</td><td><b>${esc(x.n)}</b><small>${esc(x.r)}</small><small>${esc(x.d)}</small></td><td>${esc(x.e)}</td><td>${esc(x.t)}</td><td>${fmt(x.rd)}<small>${esc(x.rt)}</small><small>${x.rd?left(x.rd):""}</small></td><td>${pill(x.s)}<div class="prog"><i style="width:${+x.p||0}%"></i></div><small>${+x.p||0}%</small></td><td><div class="acts"><button class="sm" data-a="edit" data-i="${i}">Edit</button><button class="sm" data-a="mail" data-i="${i}">Remind</button><button class="sm dang" data-a="del" data-i="${i}">Delete</button></div></td></tr>`).join(""):'<tr><td colspan="7" class="empty">No interns match. Clear the search or filters, or add an intern.</td></tr>';
+}
+function openMail(to,sub,body,bcc){const a=document.createElement("a");a.href="mailto:"+(to||"")+"?"+(bcc?"bcc="+encodeURIComponent(bcc)+"&":"")+"subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}
+function remind(x){
+ const body=`Hi ${x.n.split(" ")[0]},\n\nThis is a reminder from InternFlow.\n\nTask: ${x.t}\nStatus: ${x.s} (${+x.p||0}% complete)\nReview: ${fmt(x.rd)} at ${x.rt}\n\nPlease be ready with a short progress update.\n\nThanks,\nInternFlow Admin`;
+ openMail(x.e,"Reminder: your internship review on "+fmt(x.rd),body);say("Reminder draft opened for "+x.n+". Press Send in your mail app.");
+}
+function show(text){$("ta").value=text;$("txt").showModal();$("ta").select()}
+async function out(name,text,type){
+ try{const d=window.claude&&await claude.use("downloads");if(d){await d.save({filename:name,data:new Blob([text],{type})});return say("Download ready: "+name)}}catch(e){if(e&&e.code==="declined")return}
+ show(text);
+}
+const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+$("rows").addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i,x=data[i];
+ if(b.dataset.a==="edit")return edit(i);
+ if(b.dataset.a==="mail")return remind(x);
+ if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent="Confirm?";return setTimeout(()=>{b.classList.remove("arm");b.textContent="Delete"},3000)}
+ data.splice(i,1);save();render();say(x.n+" was deleted.");
+});
+let editing=-1;
+function edit(i){editing=i;const f=$("form"),x=i<0?{s:"Not Started",p:0,rd:"",rt:""}:data[i];$("dt").textContent=i<0?"Add intern":"Edit intern";["n","r","e","d","t","rd","rt","s","p"].forEach(k=>f.elements[k].value=x[k]??"");$("dlg").showModal()}
+$("add").onclick=()=>edit(-1);$("cancel").onclick=()=>$("dlg").close();$("tclose").onclick=()=>$("txt").close();
+$("form").addEventListener("submit",()=>{
+ const f=$("form").elements,x={};["n","r","e","d","t","rd","rt","s"].forEach(k=>x[k]=f[k].value.trim());x.p=Math.max(0,Math.min(100,+f.p.value||0));
+ if(x.s==="Completed")x.p=100;
+ if(editing<0)data.push(x);else data[editing]=x;save();render();say(x.n+" was saved.");
+});
+["search","fs","fd"].forEach(id=>$(id).addEventListener("input",render));
+$("mailall").onclick=()=>{const em=data.map(x=>x.e).filter(Boolean);if(!em.length)return say("No email addresses to send to.",1);openMail("","InternFlow reminder: your internship review","Hi,\n\nThis is a reminder from InternFlow. Please check your task, review date and time, and status in the InternFlow chatbot, and be ready with a short progress update.\n\nThanks,\nInternFlow Admin",em.join(","));say("Group reminder opened with "+em.length+" recipients in BCC.")};
+$("csv").onclick=()=>{const h=["No.","Name","Register No.","Email","Department","Task","Status","Progress %","Review Date","Review Time"];out("internflow_interns.csv",[h.map(q).join(",")].concat(data.map((x,i)=>[i+1,x.n,x.r,x.e,x.d,x.t,x.s,x.p,x.rd,x.rt].map(q).join(","))).join("\n"),"text/csv")};
+$("copyjs").onclick=async()=>{const t="window.INTERNS_DATA=[\n"+data.map(x=>"{"+["n","r","e","d","t","s"].map(k=>k+":"+JSON.stringify(x[k]||"")).join(",")+",p:"+(+x.p||0)+",rd:"+JSON.stringify(x.rd||"")+",rt:"+JSON.stringify(x.rt||"")+"}").join(",\n")+"\n];\n";try{await navigator.clipboard.writeText(t);say("Copied. Paste it into interns.js, replacing everything below the comment lines.")}catch(e){show(t)}};
+$("reset").onclick=function(){if(!this.classList.contains("arm")){this.classList.add("arm");this.textContent="Confirm reset?";return setTimeout(()=>{this.classList.remove("arm");this.textContent="Reset to schedule"},3000)}data=SEED.map(x=>({...x}));save();render();say("Data reset to the review schedule.");this.classList.remove("arm");this.textContent="Reset to schedule"};
+render();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id),log=$("cbLog"),chips=$("cbChips"),inp=$("cbIn"),who=$("cbWho");
+let me=null,fb=null,rate=0;const asked=new Set(),PACE=3,HOURS=40;
+const first=i=>i.n.split(" ")[0];
+const longD=s=>new Date(s+"T00:00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+const shortD=s=>new Date(s+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+const isoOf=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function add(c,h){const d=document.createElement("div");d.className="cm "+c;d.innerHTML=h;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+function setChips(l){chips.innerHTML="";l.forEach(x=>{const b=document.createElement("button");b.type="button";b.textContent=x;b.onclick=()=>send(x);chips.appendChild(b)})}
+const MAIN=["What is my task?","When is my review?","What is my task status?","Tips to improve","Email me a reminder","Show everything","Switch intern"];
+function find(t){
+ const l=t.toLowerCase().trim();
+ return data.find(i=>(i.r&&l.includes(i.r.toLowerCase()))||(i.e&&l.includes(i.e.toLowerCase())))||data.find(i=>i.n.toLowerCase().split(/\s+/).some(w=>{w=w.replace(/[^a-z]/g,"");return w.length>3&&new RegExp("\\b"+w+"\\b").test(l)}));
+}
+const reviewTxt=i=>i.rd?longD(i.rd)+(i.rt?" at "+i.rt:""):"";
+function taskR(i){return i.t?"Your task, "+esc(first(i))+":\n"+esc(i.t):"No task has been assigned to you yet."}
+function revR(i){if(!i.rd)return "No review date has been set yet. Please check with your admin.";return "Your review is on "+esc(reviewTxt(i))+" ("+left(i.rd)+")."+(i.s==="Completed"?"\nYour task is already complete, so this is a final review.":"")}
+function statR(i){const p=+i.p||0;return "Task status: "+pill(i.s)+'<div class="cd"><div class="bar2"><i style="width:'+p+'%"></i></div><b>Progress</b><span>'+p+'% complete</span></div>'}
+function allR(i){return "<b>"+esc(i.n)+"</b> ("+esc(i.r)+')<div class="cd"><b>Department</b><span>'+esc(i.d)+"</span><b>Task</b><span>"+esc(i.t)+"</span><b>Status</b><span>"+pill(i.s)+" "+(+i.p||0)+"%</span><b>Review</b><span>"+(esc(reviewTxt(i))||"Not set")+"</span></div>"}
+function greet(i){me=i;fb=null;asked.clear();who.textContent=i.n+"\n"+i.r;add("bot","Hi "+esc(first(i))+"! I found your record in "+esc(i.d||"InternFlow")+". Ask me about your task, review or status.");setChips(MAIN);inp.placeholder="Ask about your task, review or status";reminder(i,true)}
+const subj=i=>"Reminder: your internship review"+(i.rd?" on "+fmt(i.rd):"");
+const body=i=>"Hi "+first(i)+",\n\nThis is a reminder from InternFlow.\n\nTask: "+i.t+"\nStatus: "+i.s+" ("+(+i.p||0)+"% complete)\nReview: "+(i.rd?fmt(i.rd)+" at "+i.rt:"to be confirmed")+"\n\nPlease be ready with a short progress update.\n\nThanks,\nInternFlow Admin";
+function reminder(i,auto){
+ const m=add("bot",(auto?"I\u2019ve prepared a reminder email for you.":"Here\u2019s your reminder email.")+"\nTo: "+esc(i.e)+'<div class="dr"><b>'+esc(subj(i))+"</b>\n\n"+esc(body(i))+'</div><button type="button" class="act" data-a="o">Send reminder email</button><button type="button" class="act alt" data-a="c">Copy text</button>');
+ m.querySelector('[data-a="o"]').onclick=()=>{openMail(i.e,subj(i),body(i));add("bot","If your mail app didn\u2019t open, use Copy text and paste it into an email to "+esc(i.e)+".")};
+ m.querySelector('[data-a="c"]').onclick=()=>{const f=()=>add("bot","Copy was blocked. Select the text above and copy it manually.");try{navigator.clipboard.writeText(subj(i)+"\n\n"+body(i)).then(()=>add("bot","Copied to the clipboard."),f)}catch(e){f()}};
+}
+function guidance(i){
+ const day=864e5,t0=new Date();t0.setHours(0,0,0,0);
+ const hasRd=!!i.rd,rv=hasRd?new Date(i.rd+"T00:00:00"):null,lf=hasRd?Math.round((rv-t0)/day):null;
+ const total=+i.h||HOURS,p=+i.p||0,rem=Math.round(total*(1-p/100)),need=Math.ceil(rem/PACE);
+ let tips,best,offs;
+ if(i.s==="Completed"){tips="Your task is complete. Use the remaining days for a short demo, clear documentation and 3 or 4 points on what you learned and what you would do next.";best="Rehearse your demo once the day before the review"+(i.rt?", at "+i.rt+", the same time as your slot.":".");offs=[1]}
+ else if(i.s==="Not Started"){tips="Start today. Split the task into 3 to 5 small steps, finish the first step within 24 hours and ask your mentor early if anything is unclear.";best="Do focused work in a fixed 9 AM to 12 PM block, when you are freshest. Check your plan after 2 days and change it if step 1 is still not done.";offs=[7,5,3,2,1]}
+ else{tips="Finish what is half-done before starting new parts, write down blockers early and send your mentor a short update every 2 days.";best="Keep deep work in the morning and testing or documentation in the afternoon. Check your plan halfway to the review and change it if progress is below 50%.";offs=[5,2,1]}
+ let r1=offs.length+" reminder"+(offs.length>1?"s":"")+": "+offs.join(", ")+" day"+(offs.length>1?"s":"")+" before the review.";
+ if(hasRd){const ups=offs.map(o=>new Date(rv.getTime()-o*day)).filter(d=>d>=t0).map(d=>shortD(isoOf(d)));r1+="<br>"+(ups.length?"Upcoming: "+ups.join(", ")+".":"None are upcoming because the review is today or has passed.")}else r1+="<br>No review date is set yet.";
+ let fin;
+ if(i.s==="Completed")fin="0 hours left. The project is done.";
+ else{fin="About "+rem+" of "+total+" hours left. At "+PACE+" hours a day that takes "+need+" day"+(need>1?"s":"")+", so you can finish by "+shortD(isoOf(new Date(t0.getTime()+need*day)))+".";
+  if(hasRd)fin+="<br>"+(lf<0?"Your review date has passed, so ask your admin to reschedule.":need<=lf?"You are on track. Your review is in "+lf+" day"+(lf===1?"":"s")+".":"You are behind. To finish before the review you need about "+(rem/Math.max(lf,1)).toFixed(1)+" hours a day.")}
+ add("bot","<b>Feedback and guidance</b>"+'<div class="cd"><b>Improve</b><span>'+tips+"</span><b>Best time</b><span>"+best+"</span><b>Reminders</b><span>"+r1+"</span><b>Time to finish</b><span>"+fin+"</span></div>");
+}
+function checkFb(){if(asked.size===3&&!fb){guidance(me);fb="rating";add("bot","That covers your task, review and status. How helpful was this chat? Please rate it from 1 to 5.");setChips(["5 - Excellent","4 - Good","3 - Okay","2 - Poor","1 - Very poor"])}}
+function feedback(t){
+ if(fb==="rating"){const m=t.match(/[1-5]/);if(!m)return add("bot","Please choose a rating from 1 to 5.");rate=+m[0];fb="comment";add("bot","Thanks for the "+rate+"/5! Any comments or suggestions? Type them below, or choose Skip.");return setChips(["Skip"])}
+ const c=/^skip$/i.test(t.trim())?"":t.trim();fb="done";
+ try{const k="internflow_feedback",a=JSON.parse(localStorage.getItem(k)||"[]");a.push({reg:me.r,name:me.n,rating:rate,comment:c,at:new Date().toISOString()});localStorage.setItem(k,JSON.stringify(a))}catch(e){}
+ add("bot","Thank you, "+esc(first(me))+"! Your feedback has been recorded. Good luck with your task.");setChips(MAIN);
+}
+function wants(l){
+ if(/everything|all details|summary|my details|profile/.test(l))return "all";
+ const h=[];
+ if(/review|meeting|evaluat|when|date|time|schedule/.test(l))h.push("rev");
+ if(/status|progress|done|complete|finish|pending/.test(l))h.push("stat");
+ if(/task|work|assign|project|what (should|do) i/.test(l))h.push("task");
+ return h.length?h:null;
+}
+function reply(w){
+ if(w==="all"){["task","rev","stat"].forEach(k=>asked.add(k));add("bot",allR(me));return checkFb()}
+ w.forEach(k=>{asked.add(k);add("bot",{task:taskR,rev:revR,stat:statR}[k](me))});checkFb();
+}
+function send(t){
+ t=t.trim();if(!t)return;add("me",esc(t));inp.value="";
+ const l=t.toLowerCase();
+ if(/switch|change|logout|different|another intern/.test(l)){me=null;fb=null;asked.clear();who.textContent="";setChips([]);inp.placeholder="Type your register number or a question";return add("bot","Sure. Enter the register number, email or name of the intern.")}
+ const found=find(t);
+ if((fb==="rating"||fb==="comment")&&!found)return feedback(t);
+ if(me&&!found&&/remind|e-?mail/.test(l))return reminder(me);
+ if(me&&!found&&/guidance|advice|improve|tips?\b|how (many|much|long)|days left|deadline/.test(l))return guidance(me);
+ if(found&&found!==me){greet(found);const w=wants(l);if(w)reply(w);return}
+ if(!me)return add("bot","I need to know who you are first. Enter your register number (for example "+esc((data[0]||{}).r||"23ECE001")+"), your email address or your name.");
+ const w=wants(l);if(w)return reply(w);
+ if(/^(hi|hello|hey)\b/.test(l))return add("bot","Hello "+esc(first(me))+"! What would you like to know?");
+ if(/thank/.test(l))return add("bot","You\u2019re welcome! Good luck with your task.");
+ add("bot","I can answer three things: your task, your review date and time, and your task status. Try one of the buttons below.");
+}
+function toggle(open){const p=$("cbPanel");p.classList.toggle("open",open);$("cbFab").setAttribute("aria-expanded",open);
+ if(open&&!log.children.length){add("bot","Welcome to InternFlow! Enter your register number, email or name and I\u2019ll find your task, review time and status.");setChips(data.slice(0,3).map(x=>x.r));}
+ if(open)inp.focus()}
+$("cbFab").onclick=()=>toggle(!$("cbPanel").classList.contains("open"));
+$("cbX").onclick=()=>toggle(false);
+$("cbForm").addEventListener("submit",e=>{e.preventDefault();send(inp.value)});
+$("fbclose").onclick=()=>$("fbd").close();
+$("fbview").onclick=()=>{let a=[];try{a=JSON.parse(localStorage.getItem("internflow_feedback")||"[]")}catch(e){}
+ a=a.slice().reverse();const avg=a.length?(a.reduce((s,x)=>s+x.rating,0)/a.length).toFixed(1):"";
+ $("fbl").innerHTML=a.length?"<p><b>"+a.length+"</b> response"+(a.length>1?"s":"")+", average rating <b>"+avg+"/5</b></p>"+a.map(x=>'<div class="fbi"><b>'+esc(x.name||x.reg)+'</b> <span class="pill s-In-Progress">'+x.rating+"/5</span><small>"+new Date(x.at).toLocaleString("en-IN")+"</small><div>"+(esc(x.comment)||"<i>No comment</i>")+"</div></div>").join(""):'<p class="empty">No feedback yet. Interns can leave it in the chatbot after asking about their task, review and status.</p>';
+ $("fbd").showModal()};
+})();
+</script></body></html>
